@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class PrefUtils {
-
     private PrefUtils() {
     }
 
@@ -22,7 +21,6 @@ public final class PrefUtils {
 
         HashSet<String> defaultStocks = new HashSet<>(Arrays.asList(defaultStocksList));
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
 
         boolean initialized = prefs.getBoolean(initializedKey, false);
 
@@ -87,5 +85,4 @@ public final class PrefUtils {
 
         editor.apply();
     }
-
 }
