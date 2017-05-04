@@ -1,6 +1,5 @@
 package com.udacity.stockhawk.data;
 
-
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -16,7 +15,6 @@ public final class Contract {
     private Contract() {
     }
 
-    @SuppressWarnings("unused")
     public static final class Quote implements BaseColumns {
 
         public static final Uri URI = BASE_URI.buildUpon().appendPath(PATH_QUOTE).build();
