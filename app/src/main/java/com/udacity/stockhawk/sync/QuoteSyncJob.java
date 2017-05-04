@@ -41,76 +41,63 @@ public final class QuoteSyncJob {
 
     static void getQuotes(Context context) {
         Timber.d("Running sync job");
-        Calendar from = Calendar.getInstance();
-        Calendar to = Calendar.getInstance();
-        from.add(Calendar.YEAR, -YEARS_OF_HISTORY);
-
         try {
             Set<String> stockPref = PrefUtils.getStocks(context);
             Set<String> stockCopy = new HashSet<>();
             stockCopy.addAll(stockPref);
             String[] stockArray = stockPref.toArray(new String[stockPref.size()]);
-
             Timber.d(stockCopy.toString());
 
             if (stockArray.length == 0) {
                 return;
             }
-
             Map<String, Stock> quotes = YahooFinance.get(stockArray);
             Iterator<String> iterator = stockCopy.iterator();
-
             Timber.d(quotes.toString());
-
-            ArrayList<ContentValues> quoteCVs = new ArrayList<>();
-
             while (iterator.hasNext()) {
                 String symbol = iterator.next();
-
-
                 Stock stock = quotes.get(symbol);
-                StockQuote quote = stock.getQuote();
-
-                float price = quote.getPrice().floatValue();
-                float change = quote.getChange().floatValue();
-                float percentChange = quote.getChangeInPercent().floatValue();
-
-                // WARNING! Don't request historical data for a stock that doesn't exist!
-                // The request will hang forever X_x
-                List<HistoricalQuote> history = stock.getHistory(from, to, Interval.WEEKLY);
-
-                StringBuilder historyBuilder = new StringBuilder();
-
-                for (HistoricalQuote it : history) {
-                    historyBuilder.append(it.getDate().getTimeInMillis());
-                    historyBuilder.append(", ");
-                    historyBuilder.append(it.getClose());
-                    historyBuilder.append("\n");
-                }
-
-                ContentValues quoteCV = new ContentValues();
-                quoteCV.put(Contract.Quote.COLUMN_SYMBOL, symbol);
-                quoteCV.put(Contract.Quote.COLUMN_PRICE, price);
-                quoteCV.put(Contract.Quote.COLUMN_PERCENTAGE_CHANGE, percentChange);
-                quoteCV.put(Contract.Quote.COLUMN_ABSOLUTE_CHANGE, change);
-
-
-                quoteCV.put(Contract.Quote.COLUMN_HISTORY, historyBuilder.toString());
-
-                quoteCVs.add(quoteCV);
-
+                processQuote(context, symbol, stock);
             }
-
-            context.getContentResolver()
-                    .bulkInsert(
-                            Contract.Quote.URI,
-                            quoteCVs.toArray(new ContentValues[quoteCVs.size()]));
 
             Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
             context.sendBroadcast(dataUpdatedIntent);
 
         } catch (IOException exception) {
             Timber.e(exception, "Error fetching stock quotes");
+        }
+    }
+
+    private static void processQuote(Context context, String symbol, Stock stock) throws IOException {
+        if (stock.getName() != null) {
+            StockQuote quote = stock.getQuote();
+            float price = quote.getPrice().floatValue();
+            float change = quote.getChange().floatValue();
+            float percentChange = quote.getChangeInPercent().floatValue();
+
+            Calendar from = Calendar.getInstance();
+            Calendar to = Calendar.getInstance();
+            from.add(Calendar.YEAR, -YEARS_OF_HISTORY);
+            List<HistoricalQuote> history = stock.getHistory(from, to, Interval.WEEKLY);
+
+            StringBuilder historyBuilder = new StringBuilder();
+            for (HistoricalQuote it : history) {
+                historyBuilder.append(it.getDate().getTimeInMillis());
+                historyBuilder.append(", ");
+                historyBuilder.append(it.getClose());
+                historyBuilder.append("\n");
+            }
+
+            //UPDATE BBDD
+            ContentValues quoteCV = new ContentValues();
+            quoteCV.put(Contract.Quote.COLUMN_SYMBOL, symbol);
+            quoteCV.put(Contract.Quote.COLUMN_PRICE, price);
+            quoteCV.put(Contract.Quote.COLUMN_PERCENTAGE_CHANGE, percentChange);
+            quoteCV.put(Contract.Quote.COLUMN_ABSOLUTE_CHANGE, change);
+            quoteCV.put(Contract.Quote.COLUMN_HISTORY, historyBuilder.toString());
+            ArrayList<ContentValues> quoteCVs = new ArrayList<>();
+            quoteCVs.add(quoteCV);
+            context.getContentResolver().bulkInsert(Contract.Quote.URI, quoteCVs.toArray(new ContentValues[quoteCVs.size()]));
         }
     }
 
