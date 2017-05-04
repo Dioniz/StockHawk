@@ -41,7 +41,6 @@ public final class QuoteSyncJob {
 
     static void getQuotes(Context context) {
         Timber.d("Running sync job");
-
         Calendar from = Calendar.getInstance();
         Calendar to = Calendar.getInstance();
         from.add(Calendar.YEAR, -YEARS_OF_HISTORY);
