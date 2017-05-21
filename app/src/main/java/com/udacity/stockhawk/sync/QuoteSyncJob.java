@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 
+import com.udacity.stockhawk.MockUtils;
 import com.udacity.stockhawk.Utils;
 import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.data.PrefUtils;
@@ -78,7 +79,9 @@ public final class QuoteSyncJob {
             Calendar from = Calendar.getInstance();
             Calendar to = Calendar.getInstance();
             from.add(Calendar.YEAR, -YEARS_OF_HISTORY);
-            List<HistoricalQuote> history = stock.getHistory(from, to, Interval.WEEKLY);
+            //List<HistoricalQuote> history = stock.getHistory(from, to, Interval.WEEKLY);
+            List<HistoricalQuote> history = MockUtils.getHistory();
+
 
             StringBuilder historyBuilder = new StringBuilder();
             for (HistoricalQuote it : history) {
