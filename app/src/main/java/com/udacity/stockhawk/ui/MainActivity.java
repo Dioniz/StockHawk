@@ -1,5 +1,7 @@
 package com.udacity.stockhawk.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         StockAdapter.StockAdapterOnClickHandler {
 
     private static final int STOCK_LOADER = 0;
+    private static final String SYMBOL_PARAM = "Symbol";
 
     @BindView(R.id.recycler_view)
     RecyclerView stockRecyclerView;
@@ -164,6 +167,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     //ADAPTER CLICK
     @Override
     public void onClick(String symbol) {
-        Timber.d("Symbol clicked: %s", symbol);
+        startChartActivity(this,symbol);
+    }
+
+    public static void startChartActivity(Context context, String symbol) {
+        Intent intent = new Intent(context, chartActivity.class);
+        intent.putExtra(SYMBOL_PARAM,symbol);
+        context.startActivity(intent);
     }
 }

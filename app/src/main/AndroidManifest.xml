@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.Manifest.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <uses-permission android:name="android.permission.READ_USER_DICTIONARY" />
+
     <application
         android:name=".StockHawkApp"
         android:allowBackup="false"
@@ -18,9 +20,10 @@
         <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".ui.chartActivity">
         </activity>
 
         <service
@@ -48,5 +51,4 @@
                 android:resource="@xml/stock_widget_info" />
         </receiver>
     </application>
-
 </manifest>
