@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         StockAdapter.StockAdapterOnClickHandler {
 
     private static final int STOCK_LOADER = 0;
-    private static final String SYMBOL_PARAM = "Symbol";
+    public static final String SYMBOL_PARAM = "Symbol";
 
     @BindView(R.id.recycler_view)
     RecyclerView stockRecyclerView;
