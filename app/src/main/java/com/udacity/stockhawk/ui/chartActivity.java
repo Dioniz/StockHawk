@@ -20,12 +20,8 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -71,7 +67,7 @@ public class chartActivity extends AppCompatActivity {
         mChart.setBackgroundColor(Color.LTGRAY);
 
         // add data
-        setData(20, 30);
+        //setData(20, 30);
 
         mChart.animateX(2500);
 
@@ -87,7 +83,7 @@ public class chartActivity extends AppCompatActivity {
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
-//        l.setYOffset(11f);
+        //l.setYOffset(11f);
 
         XAxis xAxis = mChart.getXAxis();
         xAxis.setTypeface(mTfLight);
@@ -95,6 +91,7 @@ public class chartActivity extends AppCompatActivity {
         xAxis.setTextColor(Color.WHITE);
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(false);
+        xAxis.setEnabled(false);
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTypeface(mTfLight);
@@ -126,59 +123,58 @@ public class chartActivity extends AppCompatActivity {
         {
             do
             {
-                String symbol = mCursor.getString(Contract.Quote.POSITION_SYMBOL);
-                processHistory(mCursor.getString(Contract.Quote.POSITION_HISTORY));
+                setData(mCursor.getString(Contract.Quote.POSITION_HISTORY));
             } while (mCursor.moveToNext());
         }
     }
 
-    private void processHistory(String history) {
-        String[] trozos = history.split("\n");
+    private void setData(String history) {
+        String LineDataSet1Legend = symbol;
+        String[] chunks = history.split("\n");
+        ArrayList<Entry> yVals1 = new ArrayList<Entry>();
 
-        String date[] = trozos[0].split(",");
+        for (int i = 0; i < chunks.length; i++) {
+            String fields[] = chunks[i].split(",");
             Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(Long.parseLong(date[0]));
-            Log.i("test",c.get(Calendar.DAY_OF_MONTH)+"/"+c.get(Calendar.MONTH)+"/"+c.get(Calendar.YEAR));
-    }
-
-    private void setData(int count, float range) {
-
-            ArrayList<Entry> yVals1 = new ArrayList<Entry>();
-
-            for (int i = 0; i < count; i++) {
-                float mult = range / 2f;
-                float val = (float) (Math.random() * mult) + 50;
-                yVals1.add(new Entry(i, val));
+            if (i==0) {
+                c.setTimeInMillis(Long.parseLong(fields[0]));
+                LineDataSet1Legend += " ("+ c.get(Calendar.DAY_OF_MONTH)+"/"+c.get(Calendar.MONTH)+"/"+c.get(Calendar.YEAR);
+            } else if (i == chunks.length -1) {
+                c.setTimeInMillis(Long.parseLong(fields[0]));
+                LineDataSet1Legend += " - "+ c.get(Calendar.DAY_OF_MONTH)+"/"+c.get(Calendar.MONTH)+"/"+c.get(Calendar.YEAR)+")";
             }
-
-            LineDataSet set1;
-
-            if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
-                set1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
-                set1.setValues(yVals1);
-                mChart.getData().notifyDataChanged();
-                mChart.notifyDataSetChanged();
-            } else {
-                set1 = new LineDataSet(yVals1, symbol);
-
-                set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-                set1.setColor(ColorTemplate.getHoloBlue());
-                set1.setCircleColor(Color.WHITE);
-                set1.setLineWidth(2f);
-                set1.setCircleRadius(3f);
-                set1.setFillAlpha(65);
-                set1.setFillColor(ColorTemplate.getHoloBlue());
-                set1.setHighLightColor(Color.rgb(244, 117, 117));
-                set1.setDrawCircleHole(false);
-
-
-                // create a data object with the datasets
-                LineData data = new LineData(set1);
-                data.setValueTextColor(Color.WHITE);
-                data.setValueTextSize(9f);
-
-                // set data
-                mChart.setData(data);
-            }
+            //float mult = range / 2f;
+            float val = Float.parseFloat(fields[1]);
+            yVals1.add(new Entry(i, val));
         }
+
+        LineDataSet set1;
+        if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
+            set1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
+            set1.setValues(yVals1);
+            mChart.getData().notifyDataChanged();
+            mChart.notifyDataSetChanged();
+        } else {
+            set1 = new LineDataSet(yVals1, LineDataSet1Legend);
+
+            set1.setAxisDependency(YAxis.AxisDependency.LEFT);
+            set1.setColor(ColorTemplate.getHoloBlue());
+            set1.setCircleColor(Color.WHITE);
+            set1.setLineWidth(2f);
+            set1.setCircleRadius(3f);
+            set1.setFillAlpha(65);
+            set1.setFillColor(ColorTemplate.getHoloBlue());
+            set1.setHighLightColor(Color.rgb(244, 117, 117));
+            set1.setDrawCircleHole(false);
+
+
+            // create a data object with the datasets
+            LineData data = new LineData(set1);
+            data.setValueTextColor(Color.WHITE);
+            data.setValueTextSize(9f);
+
+            // set data
+            mChart.setData(data);
+        }
+    }
 }
