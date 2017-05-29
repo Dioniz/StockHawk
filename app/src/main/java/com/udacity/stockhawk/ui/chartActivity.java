@@ -46,7 +46,7 @@ public class chartActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         symbol = getIntent().getStringExtra(MainActivity.SYMBOL_PARAM);
-        content_uri = Contract.BASE_URI.buildUpon().appendPath(Contract.PATH_QUOTE).appendPath(symbol).build();;
+        content_uri = Contract.BASE_URI.buildUpon().appendPath(Contract.PATH_QUOTE).appendPath(symbol).build();
 
         loadData();
 
@@ -131,7 +131,7 @@ public class chartActivity extends AppCompatActivity {
     private void setData(String history) {
         String LineDataSet1Legend = symbol;
         String[] chunks = history.split("\n");
-        ArrayList<Entry> yVals1 = new ArrayList<Entry>();
+        ArrayList<Entry> yVals1 = new ArrayList<>();
 
         for (int i = 0; i < chunks.length; i++) {
             String fields[] = chunks[i].split(",");
