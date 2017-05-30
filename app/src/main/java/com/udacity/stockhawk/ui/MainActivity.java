@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -80,15 +81,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         QuoteSyncJob.syncImmediately(this);
         if (!Utils.networkUp(this) && adapter.getItemCount() == 0) {
             swipeRefreshLayout.setRefreshing(false);
-            error.setText(getString(R.string.error_no_network));
-            error.setVisibility(View.VISIBLE);
+            Snackbar.make(findViewById(android.R.id.content),R.string.error_no_network,Snackbar.LENGTH_LONG).show();
         } else if (!Utils.networkUp(this)) {
             swipeRefreshLayout.setRefreshing(false);
-            Toast.makeText(this, R.string.toast_no_connectivity, Toast.LENGTH_LONG).show();
+            Snackbar.make(findViewById(android.R.id.content),R.string.toast_no_connectivity,Snackbar.LENGTH_LONG).show();
         } else if (PrefUtils.getStocks(this).size() == 0) {
             swipeRefreshLayout.setRefreshing(false);
-            error.setText(getString(R.string.error_no_stocks));
-            error.setVisibility(View.VISIBLE);
+            Snackbar.make(findViewById(android.R.id.content),R.string.error_no_stocks,Snackbar.LENGTH_LONG).show();
         } else {
             error.setVisibility(View.GONE);
         }

@@ -100,6 +100,8 @@ public final class QuoteSyncJob {
             ArrayList<ContentValues> quoteCVs = new ArrayList<>();
             quoteCVs.add(quoteCV);
             context.getContentResolver().bulkInsert(Contract.Quote.URI, quoteCVs.toArray(new ContentValues[quoteCVs.size()]));
+        } else {
+            PrefUtils.removeStock(context, symbol);
         }
     }
 
