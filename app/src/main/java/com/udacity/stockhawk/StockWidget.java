@@ -1,5 +1,6 @@
 package com.udacity.stockhawk;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.widget.RemoteViews;
 
 import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
+import com.udacity.stockhawk.ui.MainActivity;
 
 public class StockWidget extends AppWidgetProvider {
 
@@ -22,7 +24,15 @@ public class StockWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.stock_widget);
         views.setTextViewText(R.id.symbol,data[0]);
         views.setTextViewText(R.id.price, data[1]);
-        views.setTextViewText(R.id.change,data[2]);
+        views.setTextViewText(R.id.change,data[2]+ " %");
+
+        if (Float.parseFloat(data[2]) < 0f) {
+            views.setInt(R.id.change, "setBackgroundResource", R.drawable.percent_change_pill_red);
+        }
+
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setOnClickPendingIntent(R.id.widgetLayout, pendingIntent);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -40,7 +50,7 @@ public class StockWidget extends AppWidgetProvider {
             do {
                 data[0] = mCursor.getString(Contract.Quote.POSITION_SYMBOL);
                 data[1] = mCursor.getString(Contract.Quote.POSITION_PRICE);
-                data[2] = mCursor.getString(Contract.Quote.POSITION_PERCENTAGE_CHANGE)+ " %";
+                data[2] = mCursor.getString(Contract.Quote.POSITION_PERCENTAGE_CHANGE);
             } while (mCursor.moveToNext());
         }
     }
@@ -63,7 +73,8 @@ public class StockWidget extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
+        Intent dataUpdatedIntent = new Intent(QuoteSyncJob.ACTION_DATA_UPDATED);
+        context.sendBroadcast(dataUpdatedIntent);
     }
     @Override
     public void onDisabled(Context context) {
