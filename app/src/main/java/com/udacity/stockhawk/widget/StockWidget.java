@@ -1,4 +1,4 @@
-package com.udacity.stockhawk;
+package com.udacity.stockhawk.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.widget.RemoteViews;
 
+import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
 import com.udacity.stockhawk.ui.MainActivity;

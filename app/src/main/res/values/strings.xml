@@ -35,5 +35,6 @@
 
 
     <string name="cd_add">this button is used to add new stock</string>
+    <string name="empty_view_text">0 Stocks Added</string>
 
 </resources>
