@@ -27,7 +27,6 @@ import com.udacity.stockhawk.sync.QuoteSyncJob;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         SwipeRefreshLayout.OnRefreshListener,
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public static void startChartActivity(Context context, String symbol) {
-        Intent intent = new Intent(context, chartActivity.class);
+        Intent intent = new Intent(context, ChartActivity.class);
         intent.putExtra(SYMBOL_PARAM,symbol);
         context.startActivity(intent);
     }

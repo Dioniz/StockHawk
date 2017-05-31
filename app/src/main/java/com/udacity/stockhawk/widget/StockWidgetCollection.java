@@ -10,8 +10,8 @@ import android.widget.RemoteViews;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
+import com.udacity.stockhawk.ui.ChartActivity;
 import com.udacity.stockhawk.ui.MainActivity;
-import com.udacity.stockhawk.ui.chartActivity;
 
 public class StockWidgetCollection extends AppWidgetProvider {
     public static final String TOAST_ACTION = "com.example.android.stackwidget.TOAST_ACTION";
@@ -28,7 +28,7 @@ public class StockWidgetCollection extends AppWidgetProvider {
     }
 
     private void goToStock(Context context, int appWidgetId, String symbol) {
-        Intent intentMainActivity = new Intent(context,chartActivity.class);
+        Intent intentMainActivity = new Intent(context,ChartActivity.class);
         intentMainActivity.putExtra(MainActivity.SYMBOL_PARAM,symbol);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intentMainActivity, PendingIntent.FLAG_UPDATE_CURRENT);
         try {

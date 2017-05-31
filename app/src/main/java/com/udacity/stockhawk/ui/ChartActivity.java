@@ -26,7 +26,7 @@ import java.util.Calendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class chartActivity extends AppCompatActivity {
+public class ChartActivity extends AppCompatActivity {
     private Uri content_uri;
 
     @BindView(R.id.chart1)
