@@ -6,13 +6,12 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
 import com.udacity.stockhawk.ui.MainActivity;
+import com.udacity.stockhawk.ui.chartActivity;
 
 public class StockWidgetCollection extends AppWidgetProvider {
     public static final String TOAST_ACTION = "com.example.android.stackwidget.TOAST_ACTION";
@@ -20,14 +19,21 @@ public class StockWidgetCollection extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        AppWidgetManager mgr = AppWidgetManager.getInstance(context);
         if (intent.getAction().equals(TOAST_ACTION)) {
             int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-            int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
-            Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_SHORT).show();
-            Log.i("","Touched");
+            String symbolClick = intent.getStringExtra(EXTRA_ITEM);
+            goToStock(context,appWidgetId,symbolClick);
         }
         super.onReceive(context, intent);
+    }
+
+    private void goToStock(Context context, int appWidgetId, String symbol) {
+        Intent intentMainActivity = new Intent(context,chartActivity.class);
+        intentMainActivity.putExtra(MainActivity.SYMBOL_PARAM,symbol);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intentMainActivity, PendingIntent.FLAG_UPDATE_CURRENT);
+        try {
+            pendingIntent.send(context, 0, intentMainActivity);
+        } catch (PendingIntent.CanceledException e) {}
     }
 
     @Override
@@ -42,19 +48,8 @@ public class StockWidgetCollection extends AppWidgetProvider {
 
             rv.setEmptyView(R.id.stack_view, R.id.empty_view);
 
-            //Intent intentMainActivity = new Intent(context, MainActivity.class);
-            //PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetIds[i], intentMainActivity, PendingIntent.FLAG_UPDATE_CURRENT);
-            //rv.setPendingIntentTemplate(R.id.stack_view, pendingIntent);
-
-            // This section makes it possible for items to have individualized behavior.
-            // It does this by setting up a pending intent template. Individuals items of a collection
-            // cannot set up their own pending intents. Instead, the collection as a whole sets
-            // up a pending intent template, and the individual items set a fillInIntent
-            // to create unique behavior on an item-by-item basis.
             Intent toastIntent = new Intent(context, StockWidgetCollection.class);
-            // Set the action for the intent.
-            // When the user touches a particular view, it will have the effect of
-            // broadcasting TOAST_ACTION.
+
             toastIntent.setAction(StockWidgetCollection.TOAST_ACTION);
             toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));

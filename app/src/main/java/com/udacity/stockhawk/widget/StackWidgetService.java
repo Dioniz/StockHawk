@@ -71,8 +71,7 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public int getCount() {
         return mWidgetItems.size();
     }
-    // Given the position (index) of a WidgetItem in the array, use the item's text value in
-    // combination with the app widget item XML file to construct a RemoteViews object.
+    @Override
     public RemoteViews getViewAt(int position) {
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.stock_widget);
         rv.setTextViewText(R.id.symbol, mWidgetItems.get(position)[0]);
@@ -84,14 +83,13 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         }
 
         Bundle extras = new Bundle();
-        extras.putInt(StockWidgetCollection.EXTRA_ITEM, position);
+        extras.putString(StockWidgetCollection.EXTRA_ITEM, mWidgetItems.get(position)[0]);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
         rv.setOnClickFillInIntent(R.id.widgetLayout, fillInIntent);
         
         return rv;
     }
-
     @Override
     public RemoteViews getLoadingView() {
         return null;
