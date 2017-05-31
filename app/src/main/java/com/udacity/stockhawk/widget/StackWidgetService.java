@@ -74,8 +74,7 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     // Given the position (index) of a WidgetItem in the array, use the item's text value in
     // combination with the app widget item XML file to construct a RemoteViews object.
     public RemoteViews getViewAt(int position) {
-
-        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.list_item_quote);
+        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.stock_widget);
         rv.setTextViewText(R.id.symbol, mWidgetItems.get(position)[0]);
         rv.setTextViewText(R.id.price,  mWidgetItems.get(position)[1]);
         rv.setTextViewText(R.id.change, mWidgetItems.get(position)[2]+ " %");
@@ -84,15 +83,11 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             rv.setInt(R.id.change, "setBackgroundResource", R.drawable.percent_change_pill_red);
         }
 
-        // Next, set a fill-intent, which will be used to fill in the pending intent template
-        // that is set on the collection view in StackWidgetProvider.
         Bundle extras = new Bundle();
         extras.putInt(StockWidgetCollection.EXTRA_ITEM, position);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
-        // Make it possible to distinguish the individual on-click
-        // action of a given item
-        rv.setOnClickFillInIntent(mAppWidgetId, fillInIntent);
+        rv.setOnClickFillInIntent(R.id.widgetLayout, fillInIntent);
         
         return rv;
     }
